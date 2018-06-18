@@ -196,7 +196,7 @@ if (${NGRAPH_INTERPRETER_ENABLE})
 endif()
 
 if (NOT APPLE)
-    # NGraph links against one or more libraries (ex. LLVM) but we don't want to
+    # nGraph links against one or more libraries (ex. LLVM) but we don't want to
     # export these symbols as part of the DSO. This is a GNU ld (and derivatives) specific
     # option so making this portable is still an open issue. As a note for the future,
     # this is not an issue on Windows and LLVM's lld does support --exclude-libs.
@@ -227,7 +227,7 @@ endif()
 # Installation logic...
 #-----------------------------------------------------------------------------------------------
 
-# NGraph
+# nGraph
 install(FILES ${CMAKE_BINARY_DIR}/VERSION DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(TARGETS ngraph DESTINATION ${NGRAPH_INSTALL_LIB})  # libngraph.so
 install(DIRECTORY

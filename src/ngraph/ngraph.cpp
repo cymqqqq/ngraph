@@ -19,14 +19,33 @@ extern "C"
     #include "ngraph/ngraph.h"
 }
 
+#include <mutex>
+
 #include "ngraph/runtime/backend.hpp"
+
+static std::mutex s_init_mutex;
+static int s_init_count = 0;
 
 extern "C" void ngraph_initialize()
 {
-    ngraph::runtime::Backend::initialize();
+    std::lock_guard<std::mutex> guard(s_init_mutex);
+    if (s_init_count++ == 0)
+    {
+        // All initializers go here
+        ngraph::runtime::Backend::initialize();
+    }
 }
 
 extern "C" void ngraph_finalize()
 {
-    ngraph::runtime::Backend::finalize();
+    std::lock_guard<std::mutex> guard(s_init_mutex);
+    if (s_init_count <= 0)
+    {
+        throw std::runtime_error("ngraph_finalize must be called exactly once for every ngraph_initialize call");
+    }
+    if (--s_init_count == 0)
+    {
+        // All finalizers go here
+        ngraph::runtime::Backend::finalize();
+    }
 }

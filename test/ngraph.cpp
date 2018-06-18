@@ -14,61 +14,24 @@
 * limitations under the License.
 *******************************************************************************/
 
-#include <dlfcn.h>
-#include <memory>
-#include <sstream>
-#include <string>
-#include <vector>
-
 #include "gtest/gtest.h"
-#include "ngraph/log.hpp"
 #include "ngraph/ngraph.hpp"
 
 using namespace std;
 
-TEST(NGraph, loadTest)
+TEST(ngraph, initialize)
 {
-    // load the triangle library
-    void* ngraphImplLib = dlopen("../src/libngraph.so", RTLD_LAZY);
-    if (!ngraphImplLib)
-    {
-        std::cerr << "Cannot load library: " << dlerror() << '\n';
-        ASSERT_FALSE(true);
-    }
+    ngraph_initialize();
+    ngraph_finalize();
+}
 
-    // reset errors
-    dlerror();
-
-    // Get the symbols
-    auto createPfn =
-        reinterpret_cast<CreateNGraphObjPfn>(dlsym(ngraphImplLib, "create_ngraph_object"));
-    ASSERT_FALSE(createPfn == nullptr);
-
-    auto destroyPfn =
-        reinterpret_cast<DestroyNGraphObjPfn>(dlsym(ngraphImplLib, "destroy_ngraph_object"));
-    ASSERT_FALSE(destroyPfn == nullptr);
-
-    NGraph* nGraphObj = createPfn();
-
-    NGRAPH_INFO << "Call a method on the Object";
-    ASSERT_EQ("NGraph Implementation Object", nGraphObj->get_name());
-    NGRAPH_INFO << "Object Name: " << nGraphObj->get_name();
-
-    // Add some parameters
-    const vector<string> TEST_PARAMS = {"param-1", "param-2", "param-3"};
-
-    nGraphObj->add_params(TEST_PARAMS);
-
-    // Get the list of params
-    auto& storedParams = nGraphObj->get_params();
-    EXPECT_EQ(TEST_PARAMS.size(), storedParams.size());
-    for (int i = 0; i < TEST_PARAMS.size(); i++)
-    {
-        EXPECT_EQ(TEST_PARAMS[i], storedParams[i]);
-    }
-
-    NGRAPH_INFO << "Destroy the NGraph Object";
-    destroyPfn(nGraphObj);
-
-    dlclose(ngraphImplLib);
+TEST(ngraph, initialize_multi)
+{
+    ngraph_initialize();
+    ngraph_initialize();
+    ngraph_initialize();
+    ngraph_finalize();
+    ngraph_finalize();
+    ngraph_finalize();
+    EXPECT_THROW(ngraph_finalize(), runtime_error);
 }
