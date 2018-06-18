@@ -33,12 +33,26 @@ static string find_my_file()
     return dl_info.dli_fname;
 }
 
+static bool is_backend(const string& path)
+{
+    bool rc = false;
+    string name = file_util::get_file_name(path);
+    if (name.find("_backend.") != string::npos)
+    {
+        NGRAPH_INFO << name;
+    }
+    return rc;
+}
+
 void runtime::Backend::initialize()
 {
     string my_directory = file_util::get_directory(find_my_file());
-    NGRAPH_INFO << my_directory;
+    vector<string> backends;
     auto func = [](const std::string& file, bool is_dir){
-        NGRAPH_INFO << file;
+        if (is_backend(file))
+        {
+            NGRAPH_INFO << "found backend " << file;
+        }
     };
     file_util::iterate_files(my_directory, func);
 }
