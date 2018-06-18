@@ -44,6 +44,9 @@ namespace ngraph
             ///   does not exist.
             static std::shared_ptr<Backend> create(const std::string& type);
 
+            static void initialize();
+            static void finalize();
+
             /// @brief Query the list of registered devices
             /// @returns A vector of all registered devices.
             static std::vector<std::string> get_registered_devices();

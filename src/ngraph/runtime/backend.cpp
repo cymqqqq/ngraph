@@ -24,6 +24,14 @@
 using namespace std;
 using namespace ngraph;
 
+void runtime::Backend::initialize()
+{
+}
+
+void runtime::Backend::finalize()
+{
+}
+
 bool runtime::Backend::register_backend(const string& name, shared_ptr<Backend> backend)
 {
     get_backend_map().insert({name, backend});
