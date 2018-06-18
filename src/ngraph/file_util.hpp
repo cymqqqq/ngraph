@@ -30,6 +30,7 @@ class ngraph::file_util
 public:
     static std::string get_file_name(const std::string&);
     static std::string get_file_ext(const std::string&);
+    static std::string get_directory(const std::string&);
     static std::string path_join(const std::string& s1, const std::string& s2);
     static size_t get_file_size(const std::string& filename);
     static void remove_directory(const std::string& dir);

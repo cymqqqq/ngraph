@@ -61,6 +61,17 @@ std::string ngraph::file_util::get_file_ext(const std::string& s)
     return rc;
 }
 
+string ngraph::file_util::get_directory(const string& s)
+{
+    string rc = s;
+    auto pos = s.find_last_of('/');
+    if (pos != string::npos)
+    {
+        rc = s.substr(0, pos);
+    }
+    return rc;
+}
+
 string ngraph::file_util::path_join(const string& s1, const string& s2)
 {
     string rc;
@@ -226,9 +237,13 @@ void ngraph::file_util::iterate_files(const string& path,
     file_util::iterate_files_worker(path,
                                     [&files, &dirs](const string& file, bool is_dir) {
                                         if (is_dir)
+                                        {
                                             dirs.push_back(file);
+                                        }
                                         else
+                                        {
                                             files.push_back(file);
+                                        }
                                     },
                                     recurse);
 

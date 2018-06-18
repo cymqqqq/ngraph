@@ -20,16 +20,32 @@
 #include "ngraph/runtime/backend.hpp"
 #include "ngraph/runtime/cpu/cpu_tensor_view.hpp"
 #include "ngraph/util.hpp"
+#include "ngraph/file_util.hpp"
 
 using namespace std;
 using namespace ngraph;
 
+// This doodad finds the containing shared library
+static string find_my_file()
+{
+    Dl_info dl_info;
+    dladdr(reinterpret_cast<void*>(find_my_file), &dl_info);
+    return dl_info.dli_fname;
+}
+
 void runtime::Backend::initialize()
 {
+    string my_directory = file_util::get_directory(find_my_file());
+    NGRAPH_INFO << my_directory;
+    auto func = [](const std::string& file, bool is_dir){
+        NGRAPH_INFO << file;
+    };
+    file_util::iterate_files(my_directory, func);
 }
 
 void runtime::Backend::finalize()
 {
+    NGRAPH_INFO;
 }
 
 bool runtime::Backend::register_backend(const string& name, shared_ptr<Backend> backend)
